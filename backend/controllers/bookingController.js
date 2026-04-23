@@ -8,10 +8,16 @@ const Shipment = require("../models/Shipment");
 
 const RazorpayLib = require("razorpay");
 
-const razorpayInstance = new RazorpayLib({
-  key_id: process.env.RAZORPAY_KEY_ID,
-  key_secret: process.env.RAZORPAY_KEY_SECRET
-});
+let razorpayInstance = null;
+
+if (process.env.RAZORPAY_KEY_ID && process.env.RAZORPAY_KEY_SECRET) {
+  razorpayInstance = new RazorpayLib({
+    key_id: process.env.RAZORPAY_KEY_ID,
+    key_secret: process.env.RAZORPAY_KEY_SECRET
+  });
+} else {
+  console.log("⚠️ Razorpay keys not found. Payment disabled.");
+}
 
 
 const getRequiredVehicleType = (items) => {
@@ -179,12 +185,15 @@ if (!driver && filteredDrivers.length > 0) {
     const bookingId = `SWIFT-${Date.now().toString().slice(-6)}`;
     const trackingId = `TRK-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
   
-    const order = await razorpayInstance.orders.create({
-      amount: Math.round(amount * 100),
-      currency: "INR",
-      receipt: bookingId
-    });
+   let order = { id: null, amount: amount * 100 };
 
+if (razorpayInstance) {
+  order = await razorpayInstance.orders.create({
+    amount: Math.round(amount * 100),
+    currency: "INR",
+    receipt: bookingId
+  });
+}
   
     const booking = new Booking({
       bookingId,
