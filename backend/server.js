@@ -11,8 +11,7 @@ const rateLimit = require('express-rate-limit');
 const connectDB = require('./config/db');
 
 dotenv.config();
-console.log("GOOGLE_CLIENT_ID:", process.env.GOOGLE_CLIENT_ID);
-console.log("GOOGLE_CALLBACK_URL:", process.env.GOOGLE_CALLBACK_URL);
+
 // Connect MongoDB
 connectDB();
 
