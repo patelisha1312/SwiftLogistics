@@ -30,9 +30,13 @@ const server = http.createServer(app);
 SOCKET.IO INITIALIZATION
 ---------------------------------------
 */
-const io = new Server(server, {
+
+  const io = new Server(server, {
   cors: {
-    origin: "*",
+    origin: [
+      "http://localhost:5173",
+      "https://swiftlogictics-frontend.onrender.com"
+    ],
     methods: ["GET", "POST"]
   }
 });
@@ -83,7 +87,10 @@ const limiter = rateLimit({
 app.use("/api", limiter);
 // CORS
 app.use(cors({
-  origin: "*",
+  origin: [
+    "http://localhost:5173",
+    "https://swiftlogictics-frontend.onrender.com"
+  ],
   credentials: true
 }));
 
