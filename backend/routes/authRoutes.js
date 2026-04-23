@@ -19,7 +19,10 @@ router.get('/google', passport.authenticate('google', { scope: ['profile', 'emai
 
 router.get(
     '/google/callback', 
-    passport.authenticate('google', { failureRedirect: '/login', session: false }), 
+    passport.authenticate('google', { 
+        failureRedirect: `${process.env.FRONTEND_URL}/login`, 
+        session: false 
+    }), 
     authController.googleCallback
 );
 
@@ -29,12 +32,14 @@ router.get('/facebook', passport.authenticate('facebook', { scope: ['email'], se
 
 router.get(
     '/facebook/callback',
-    passport.authenticate('facebook', { failureRedirect: 'http://localhost:5173/login', session: false }),
+    passport.authenticate('facebook', { 
+        failureRedirect: `${process.env.FRONTEND_URL}/login`, 
+        session: false 
+    }),
     authController.facebookCallback
-    
 );
 router.get('/login', (req, res) => {
-    res.redirect('http://localhost:5173/login');
+    res.redirect(`${process.env.FRONTEND_URL}/login`);
 });
 router.delete("/users/:id", async (req, res) => {
   try {
