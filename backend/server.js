@@ -11,7 +11,8 @@ const rateLimit = require('express-rate-limit');
 const connectDB = require('./config/db');
 
 dotenv.config();
-
+console.log("GOOGLE_CLIENT_ID:", process.env.GOOGLE_CLIENT_ID);
+console.log("GOOGLE_CALLBACK_URL:", process.env.GOOGLE_CALLBACK_URL);
 // Connect MongoDB
 connectDB();
 
@@ -31,7 +32,7 @@ SOCKET.IO INITIALIZATION
 */
 const io = new Server(server, {
   cors: {
-    origin: "http://localhost:5173",
+    origin: "*",
     methods: ["GET", "POST"]
   }
 });
@@ -82,7 +83,7 @@ const limiter = rateLimit({
 app.use("/api", limiter);
 // CORS
 app.use(cors({
-  origin: "http://localhost:5173",
+  origin: "*",
   credentials: true
 }));
 

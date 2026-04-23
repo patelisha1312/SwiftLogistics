@@ -8,7 +8,7 @@ module.exports = function (passport) {
     passport.use(new GoogleStrategy({
         clientID: process.env.GOOGLE_CLIENT_ID,
         clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-        callbackURL: '/api/auth/google/callback'
+        callbackURL: process.env.GOOGLE_CALLBACK_URL
     },
     async (accessToken, refreshToken, profile, done) => {
         try {
@@ -38,7 +38,7 @@ module.exports = function (passport) {
     }));
 
 
-    passport.use(new FacebookStrategy({
+ /*passport.use(new FacebookStrategy({
         clientID: process.env.FACEBOOK_APP_ID,
         clientSecret: process.env.FACEBOOK_APP_SECRET,
         callbackURL: "http://localhost:5000/api/auth/facebook/callback",
@@ -102,5 +102,5 @@ module.exports = function (passport) {
             console.error("Facebook Error:", err);
             done(err, null);
         }
-    }));
+    }));*/
 };
