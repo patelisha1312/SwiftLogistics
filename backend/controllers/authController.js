@@ -24,13 +24,12 @@ if (existingUser || existingDriver) {
 }
     
 
-const salt = await bcrypt.genSalt(8);
-    const hashedPassword = await bcrypt.hash(password, salt);
+
 
     const user = new User({
   name,
   email: cleanEmail,
-  password: hashedPassword,
+  password: password,
       role: role || "user"
     });
 
