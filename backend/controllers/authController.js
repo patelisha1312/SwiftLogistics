@@ -102,15 +102,19 @@ const { name, email, password, phone, vehicleType, vehicleNumber } = req.body;
       return res.status(400).json({ msg: 'Email is already registered' });
     }
 
+const salt = await bcrypt.genSalt(10);
+const hashedPassword = await bcrypt.hash(password, salt);
+
 driver = new Driver({
   name,
   email,
-  password,
-  phone, 
+  password: hashedPassword,
+  phone,
   vehicleType,
   vehicleNumber
-});
+})
     await driver.save();
+
 
     const token = jwt.sign(
       { id: driver._id, role: 'driver' },
@@ -313,9 +317,16 @@ exports.resetPassword = async (req, res) => {
 
 
 const cleanPassword = req.body.password.trim();
-user.password = cleanPassword; 
 
-await user.save({ validateBeforeSave: false }); 
+const salt = await bcrypt.genSalt(10);
+const hashedPassword = await bcrypt.hash(cleanPassword, salt);
+
+user.password = hashedPassword;
+
+user.resetPasswordToken = undefined;
+user.resetPasswordExpire = undefined;
+
+await user.save();
 
     user.resetPasswordToken = undefined;
     user.resetPasswordExpire = undefined;
