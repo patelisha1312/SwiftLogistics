@@ -46,31 +46,39 @@ if (existingUser || existingDriver) {
 // Login (User)
 exports.login = async (req, res) => {
   try {
-    const email = req.body.email.trim().toLowerCase();
-const password = req.body.password;
+    const { email, password } = req.body;
 
-   const user = await User.findOne({ email: email.toLowerCase() });
-    if (!user) {
-      return res.status(400).json({ msg: "Invalid credentials" });
+    // 1. Check fields
+    if (!email || !password) {
+      return res.status(400).json({ message: "Please enter email and password" });
     }
 
-    console.log("ENTERED PASSWORD:", password);
-    console.log("DB HASH:", user.password);
+    // 2. Find user
+    const user = await User.findOne({ email });
 
+    if (!user) {
+      return res.status(400).json({ message: "User not found" });
+    }
+
+    // 3. Compare password
     const isMatch = await bcrypt.compare(password, user.password);
 
+    console.log("ENTERED:", password);
+    console.log("HASH:", user.password);
     console.log("MATCH:", isMatch);
 
     if (!isMatch) {
-      return res.status(400).json({ msg: "Invalid credentials" });
+      return res.status(400).json({ message: "Invalid credentials" });
     }
 
+    // 4. Create token
     const token = jwt.sign(
       { id: user._id, role: user.role },
       process.env.JWT_SECRET,
-      { expiresIn: "1d" }
+      { expiresIn: "7d" }
     );
 
+    // 5. Send response
     res.json({
       token,
       user: {
@@ -82,11 +90,10 @@ const password = req.body.password;
     });
 
   } catch (error) {
-    console.error("Login Error:", error);
-    res.status(500).json({ msg: "Server error" });
+    console.error("LOGIN ERROR:", error);
+    res.status(500).json({ message: "Server error" });
   }
 };
-
 
 // Driver Signup
 exports.driverSignup = async (req, res) => {
