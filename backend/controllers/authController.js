@@ -12,7 +12,9 @@ exports.signup = async (req, res) => {
   try {
     const { name, email, password, role } = req.body;
 
-const existingUser = await User.findOne({ email });
+const cleanEmail = email.trim().toLowerCase();
+
+const existingUser = await User.findOne({ email: cleanEmail });
 const existingDriver = await Driver.findOne({ email });
 
 if (existingUser || existingDriver) {
@@ -26,9 +28,9 @@ const salt = await bcrypt.genSalt(8);
     const hashedPassword = await bcrypt.hash(password, salt);
 
     const user = new User({
-      name,
-      email,
-      password: hashedPassword,
+  name,
+  email: cleanEmail,
+  password: hashedPassword,
       role: role || "user"
     });
 
@@ -45,10 +47,10 @@ const salt = await bcrypt.genSalt(8);
 // Login (User)
 exports.login = async (req, res) => {
   try {
-    const email = req.body.email.trim();
-    const password = req.body.password.trim();
+    const email = req.body.email.trim().toLowerCase();
+const password = req.body.password;
 
-    const user = await User.findOne({ email });
+   const user = await User.findOne({ email: email.toLowerCase() });
     if (!user) {
       return res.status(400).json({ msg: "Invalid credentials" });
     }
@@ -323,10 +325,7 @@ const hashedPassword = await bcrypt.hash(cleanPassword, salt);
 
 user.password = hashedPassword;
 
-user.resetPasswordToken = undefined;
-user.resetPasswordExpire = undefined;
 
-await user.save();
 
     user.resetPasswordToken = undefined;
     user.resetPasswordExpire = undefined;
