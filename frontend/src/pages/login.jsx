@@ -22,19 +22,17 @@ const [suggestions, setSuggestions] = useState([]);
   const token = params.get("token");
 
   if (token) {
-    // 1. Save token immediately
     localStorage.setItem("token", token);
-    
-    // 2. Call your context login (Assuming your context fetches user data via token)
-    // If your backend sends user info in params, keep them, otherwise just pass token
-    const name = params.get("name") || "Facebook User";
-const email = params.get("email") || "";
-const role = params.get("role") || "user";
 
-login({ name, email, role }, token);
+    login(
+      {
+        name: params.get("name") || "User",
+        email: params.get("email") || "",
+        role: "user"
+      },
+      token
+    );
 
-    // 3. Clean the URL and redirect
-    window.history.replaceState({}, document.title, "/");
     navigate("/");
   }
 }, [login, navigate]);

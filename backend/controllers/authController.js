@@ -35,7 +35,21 @@ if (existingUser || existingDriver) {
 
     await user.save();
 
-    res.status(201).json({ msg: "User registered successfully" });
+   const token = jwt.sign(
+  { id: user._id, role: user.role },
+  process.env.JWT_SECRET,
+  { expiresIn: "7d" }
+);
+
+res.status(201).json({
+  token,
+  user: {
+    id: user._id,
+    name: user.name,
+    email: user.email,
+    role: user.role
+  }
+});
 
   } catch (error) {
     console.error("Signup Error:", error);
@@ -54,7 +68,9 @@ exports.login = async (req, res) => {
     }
 
     // 2. Find user
-    const user = await User.findOne({ email });
+   const cleanEmail = email.trim().toLowerCase();
+
+const user = await User.findOne({ email: cleanEmail });
 
     if (!user) {
       return res.status(400).json({ message: "User not found" });
@@ -68,7 +84,7 @@ exports.login = async (req, res) => {
     console.log("MATCH:", isMatch);
 
     if (!isMatch) {
-      return res.status(400).json({ message: "Invalid credentials" });
+      return res.status(400).json({ msg: "Invalid credentials" });
     }
 
     // 4. Create token
