@@ -113,80 +113,64 @@ const user = await User.findOne({ email: cleanEmail });
 
 // Driver Signup
 exports.driverSignup = async (req, res) => {
-const { name, email, password, phone, vehicleType, vehicleNumber } = req.body;
   try {
+    const {
+      name,
+      email,
+      password,
+      phone,
+      vehicleType,
+      vehicleNumber
+    } = req.body;
+
+    // validation
     if (!name || !email || !password || !vehicleType || !vehicleNumber) {
       return res.status(400).json({
-        msg: 'All fields are required for driver signup'
+        msg: "All fields are required"
       });
     }
 
+    // check existing
     let driver = await Driver.findOne({ email });
     if (driver) {
-      return res.status(400).json({ msg: 'Email is already registered' });
+      return res.status(400).json({ msg: "Email already registered" });
     }
 
-const salt = await bcrypt.genSalt(10);
-const hashedPassword = await bcrypt.hash(password, salt);
+    // create driver
+    driver = new Driver({
+      name,
+      email,
+      password, // ⚠️ let model hash it
+      phone,
+      vehicleType,
+      vehicleNumber,
+      profileStatus: "Incomplete"
+    });
 
-driver = new Driver({
-  name,
-  email,
-  password: hashedPassword,
-  phone,
-  vehicleType,
-  vehicleNumber
-})
     await driver.save();
 
-
     const token = jwt.sign(
-      { id: driver._id, role: 'driver' },
+      { id: driver._id, role: "driver" },
       process.env.JWT_SECRET,
-      { expiresIn: '7d' }
+      { expiresIn: "7d" }
     );
 
-   res.json({ 
-    token,
-    user: {
-  id: driver._id,
-  name: driver.name,
-  email: driver.email,
-  role: 'driver',
-  profileStatus: driver.profileStatus
-}
-
-});
-
+    res.status(201).json({
+      token,
+      user: {
+        id: driver._id,
+        name: driver.name,
+        email: driver.email,
+        role: "driver",
+        profileStatus: driver.profileStatus
+      }
+    });
 
   } catch (error) {
-    console.error('Driver signup error:', error);
-
-    if (error.code === 11000) {
-      if (error.keyPattern?.vehicleNumber) {
-        return res.status(400).json({
-          msg: 'Vehicle number is already registered'
-        });
-      }
-      if (error.keyPattern?.email) {
-        return res.status(400).json({
-          msg: 'Email is already registered'
-        });
-      }
-    }
-
-    if (error.name === 'ValidationError') {
-      return res.status(400).json({
-        msg: Object.values(error.errors)[0].message
-      });
-    }
-
-    return res.status(500).json({
-      msg: 'Server error'
-    });
+    console.error("DRIVER SIGNUP ERROR:", error);
+    res.status(500).json({ msg: "Server error" });
   }
 };
-
 // Driver Login
 exports.driverLogin = async (req, res) => {
     const { email, password } = req.body;

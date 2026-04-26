@@ -82,19 +82,19 @@ const Signup = () => {
             : `${import.meta.env.VITE_API_URL}/api/auth/driver/signup`;
 
         // Create payload
-        const payload = {
-    name: formData.name,
-    email: formData.email,
-    phone: formData.phone, // ✅ ADD THIS (THIS IS THE ISSUE)
-    password: formData.password,
-    role: role
+       const payload = {
+  name: formData.name,
+  email: formData.email,
+  phone: formData.phone,
+  password: formData.password,
 };
 
+if (role === "driver") {
+  payload.vehicleType = formData.vehicleType;
+  payload.vehicleNumber = formData.vehicleNumber;
+}
 
-        if (role === 'driver') {
-            payload.vehicleType = formData.vehicleType;
-            payload.vehicleNumber = formData.vehicleNumber;
-        }
+
 
         try {
             const response = await fetch(apiUrl, {
