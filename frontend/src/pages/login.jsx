@@ -124,7 +124,7 @@ localStorage.setItem("rememberList", JSON.stringify(updatedList));
   const appId = import.meta.env.VITE_FACEBOOK_APP_ID;
 
   window.location.href =
-    `https://www.facebook.com/v19.0/dialog/oauth?client_id=${appId}&redirect_uri=http://swiftlogistics-backend.onrender.com/api/auth/facebook/callback&scope=public_profile`;
+    `https://www.facebook.com/v19.0/dialog/oauth?client_id=${appId}&redirect_uri=https://swiftlogistics-backend.onrender.com/api/auth/facebook/callback&scope=public_profile`;
 };
 const handleSelectSuggestion = (item) => {
   setFormData({

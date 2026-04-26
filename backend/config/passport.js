@@ -41,7 +41,7 @@ module.exports = function (passport) {
  /*passport.use(new FacebookStrategy({
         clientID: process.env.FACEBOOK_APP_ID,
         clientSecret: process.env.FACEBOOK_APP_SECRET,
-        callbackURL: "http://swiftlogistics-backend.onrender.com/api/auth/facebook/callback",
+        callbackURL: "https://swiftlogistics-backend.onrender.com/api/auth/facebook/callback",
         profileFields: ['id', 'displayName', 'name', 'emails']
     },
     async (accessToken, refreshToken, profile, done) => {

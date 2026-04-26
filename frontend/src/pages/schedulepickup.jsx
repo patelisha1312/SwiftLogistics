@@ -79,10 +79,11 @@ const [items, setItems] = useState([]);
   if (!address || address.length < 5) return;
 
   try {
-    const response = await fetch(
-      `http://swiftlogistics-backend.onrender.com/api/geocode?address=${encodeURIComponent(address)}`
-    );
+    const API = import.meta.env.VITE_API_URL;
 
+const response = await fetch(
+  `${API}/api/geocode?address=${encodeURIComponent(address)}`
+);
     const data = await response.json();
 
     if (!data || !data[0]) return;

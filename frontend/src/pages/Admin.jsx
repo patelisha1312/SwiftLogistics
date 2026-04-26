@@ -70,11 +70,11 @@ const [topRoutesData, setTopRoutesData] = useState([]);
       activity,
       routes
     ] = await Promise.all([
-      axios.get("http://swiftlogistics-backend.onrender.com/api/admin/dashboard-stats"),
-      axios.get("http://swiftlogistics-backend.onrender.com/api/admin/monthly-revenue"),
-      axios.get("http://swiftlogistics-backend.onrender.com/api/admin/shipment-status"),
-      axios.get("http://swiftlogistics-backend.onrender.com/api/admin/daily-activity"),
-      axios.get("http://swiftlogistics-backend.onrender.com/api/admin/top-routes")
+      axios.get("https://swiftlogistics-backend.onrender.com/api/admin/dashboard-stats"),
+      axios.get("https://swiftlogistics-backend.onrender.com/api/admin/monthly-revenue"),
+      axios.get("https://swiftlogistics-backend.onrender.com/api/admin/shipment-status"),
+      axios.get("https://swiftlogistics-backend.onrender.com/api/admin/daily-activity"),
+      axios.get("https://swiftlogistics-backend.onrender.com/api/admin/top-routes")
     ]);
 console.log("🔥 DASHBOARD:", stats.data);
     setDashboardStats({ ...stats.data });
@@ -101,7 +101,7 @@ useEffect(() => {
   return () => clearInterval(interval);
 }, []);
 useEffect(() => {
-  const socket = io("http://swiftlogistics-backend.onrender.com");
+  const socket = io("https://swiftlogistics-backend.onrender.com");
 
   socket.on("dashboard-update", () => {
     fetchDashboardData();
@@ -110,11 +110,11 @@ useEffect(() => {
   return () => socket.disconnect();
 }, []);
 const downloadCSV = () => {
-  window.open("http://swiftlogistics-backend.onrender.com/api/admin/export/csv");
+  window.open("https://swiftlogistics-backend.onrender.com/api/admin/export/csv");
 };
 
 const downloadPDF = () => {
-  window.open("http://swiftlogistics-backend.onrender.com/api/admin/export/pdf");
+  window.open("https://swiftlogistics-backend.onrender.com/api/admin/export/pdf");
 };
 const formatRevenue = (amount) => {
   const value = Number(amount) || 0;

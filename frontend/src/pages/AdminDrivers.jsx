@@ -5,20 +5,20 @@ const AdminDrivers = () => {
   const [drivers, setDrivers] = useState([]);
 
   useEffect(() => {
-    axios.get("http://swiftlogistics-backend.onrender.com/api/driver/all")
+    axios.get("https://swiftlogistics-backend.onrender.com/api/driver/all")
   .then((res) => setDrivers(res.data.drivers)) // ✅ FIXED
   .catch((err) => console.error(err));
   }, []);
 const approveDriver = async (id) => {
-  await axios.put(`http://swiftlogistics-backend.onrender.com/api/driver/approve/${id}`);
+  await axios.put(`https://swiftlogistics-backend.onrender.com/api/driver/approve/${id}`);
   
   // refresh
-  const res = await axios.get("http://swiftlogistics-backend.onrender.com/api/driver/all");
+  const res = await axios.get("https://swiftlogistics-backend.onrender.com/api/driver/all");
   setDrivers(res.data.drivers);
 };
 
 const rejectDriver = async (id) => {
-  await axios.put(`http://swiftlogistics-backend.onrender.com/api/driver/reject/${id}`);
+  await axios.put(`https://swiftlogistics-backend.onrender.com/api/driver/reject/${id}`);
   setDrivers(drivers.filter((d) => d._id !== id));
 };
   return (
