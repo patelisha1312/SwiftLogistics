@@ -65,13 +65,24 @@ const [suggestions, setSuggestions] = useState([]);
       : `${import.meta.env.VITE_API_URL}/api/auth/driver/login`;
 
     try {
-  const response = await fetch(apiUrl, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify(formData)
-  });
+  const payload = {
+  email: formData.email.trim().toLowerCase(),
+  password: formData.password
+};
+
+console.log("SENDING LOGIN DATA:", payload); // 🔥 DEBUG
+if (!formData.email || !formData.password) {
+  setError("Please enter email and password");
+  setIsLoading(false);
+  return;
+}
+const response = await fetch(apiUrl, {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json"
+  },
+  body: JSON.stringify(payload)
+});
 
   const data = await response.json();
   
@@ -84,7 +95,7 @@ const [suggestions, setSuggestions] = useState([]);
 
   // Use the user object directly from the backend response
   login(data.user, data.token);
-  // ✅ REMEMBER ME LOGIC
+  
 // ✅ Remember Me Logic
 if (rememberMe) {
   const existing = JSON.parse(localStorage.getItem("rememberList")) || [];

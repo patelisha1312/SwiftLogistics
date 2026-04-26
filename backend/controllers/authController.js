@@ -179,26 +179,29 @@ const driver = new Driver({
 // Driver Login
 exports.driverLogin = async (req, res) => {
   try {
-    let { email, password } = req.body;
+    console.log("REQ BODY:", req.body); // 🔥 DEBUG
 
-    // ✅ FIX: clean email
+    const { email, password } = req.body || {};
+
+    // ✅ VALIDATION (IMPORTANT)
+    if (!email || !password) {
+      return res.status(400).json({ msg: "Email and password required" });
+    }
+
     const cleanEmail = email.trim().toLowerCase();
 
-    // 🔍 Find driver
     const driver = await Driver.findOne({ email: cleanEmail });
 
     if (!driver) {
       return res.status(400).json({ msg: "Driver not found" });
     }
 
-    // 🔐 Check password
     const isMatch = await driver.matchPassword(password);
 
     if (!isMatch) {
       return res.status(400).json({ msg: "Invalid credentials" });
     }
 
-    // 🔑 Generate token
     const token = jwt.sign(
       { id: driver._id, role: "driver" },
       process.env.JWT_SECRET,
@@ -216,7 +219,7 @@ exports.driverLogin = async (req, res) => {
     });
 
   } catch (err) {
-    console.error("Driver Login Error:", err);
+    console.error("🔥 DRIVER LOGIN ERROR:", err);
     res.status(500).json({ msg: "Server error" });
   }
 };
