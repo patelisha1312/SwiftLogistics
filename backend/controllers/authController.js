@@ -129,7 +129,18 @@ exports.driverSignup = async (req, res) => {
     }
 
     // 🔴 check existing email
-    const existingDriver = await Driver.findOne({ email });
+    const cleanEmail = email.trim().toLowerCase();
+
+const existingDriver = await Driver.findOne({ email: cleanEmail });
+
+const driver = new Driver({
+  name,
+  email: cleanEmail, // ✅ important
+  password,
+  phone,
+  vehicleType,
+  vehicleNumber
+});
     if (existingDriver) {
       return res.status(400).json({ msg: "Email already registered" });
     }
@@ -140,15 +151,7 @@ exports.driverSignup = async (req, res) => {
       return res.status(400).json({ msg: "Vehicle already registered" });
     }
 
-    // ✅ IMPORTANT: DO NOT HASH HERE
-    const driver = new Driver({
-      name,
-      email,
-      password,   // model will hash
-      phone,
-      vehicleType,
-      vehicleNumber
-    });
+  
 
     await driver.save();
 
@@ -175,45 +178,48 @@ exports.driverSignup = async (req, res) => {
 };
 // Driver Login
 exports.driverLogin = async (req, res) => {
-    const { email, password } = req.body;
-    try {
-        const driver = await Driver.findOne({ email });
-        if (!driver) return res.status(400).json({ msg: 'Invalid credentials' });
+  try {
+    let { email, password } = req.body;
 
-        const isMatch = await driver.matchPassword(password);
-        if (!isMatch) return res.status(400).json({ msg: 'Invalid credentials' });
+    // ✅ FIX: clean email
+    const cleanEmail = email.trim().toLowerCase();
 
-        const token = jwt.sign({ id: driver._id, role: 'driver' }, process.env.JWT_SECRET, { expiresIn: '1h' });
-        
-        res.json({ 
-  token,
-  user: { 
-    id: driver._id,
-    name: driver.name, 
-    email: driver.email, 
-    role: 'driver',
+    // 🔍 Find driver
+    const driver = await Driver.findOne({ email: cleanEmail });
 
-    
-    phone: driver.phone,
-    address: driver.address,
-    gender: driver.gender,
-    experience: driver.experience,
-    vehicleType: driver.vehicleType,
-    vehicleNumber: driver.vehicleNumber,
-    licenseNumber: driver.licenseNumber,
-    profileImage: driver.profileImage,
-    profileStatus: driver.profileStatus,
-    isVerified: driver.isVerified,
-    isAvailable: driver.isAvailable
-  }
-});
-
-    } catch (err) {
-        res.status(500).json({ msg: 'Server error' });
+    if (!driver) {
+      return res.status(400).json({ msg: "Driver not found" });
     }
+
+    // 🔐 Check password
+    const isMatch = await driver.matchPassword(password);
+
+    if (!isMatch) {
+      return res.status(400).json({ msg: "Invalid credentials" });
+    }
+
+    // 🔑 Generate token
+    const token = jwt.sign(
+      { id: driver._id, role: "driver" },
+      process.env.JWT_SECRET,
+      { expiresIn: "7d" }
+    );
+
+    res.json({
+      token,
+      user: {
+        id: driver._id,
+        name: driver.name,
+        email: driver.email,
+        role: "driver"
+      }
+    });
+
+  } catch (err) {
+    console.error("Driver Login Error:", err);
+    res.status(500).json({ msg: "Server error" });
+  }
 };
-
-
 // Google callback
 exports.googleCallback = async (req, res) => {
   try {
