@@ -48,45 +48,56 @@ exports.findAvailableDriver = async (req, res) => {
 
 exports.updateDriverProfile = async (req, res) => {
   try {
-    const driver = await Driver.findById(req.user._id || req.user.id);
+    const driverId = req.user.id;
+
+    console.log("👉 Driver ID:", driverId);
+    console.log("👉 Incoming Data:", req.body);
+
+    const driver = await Driver.findById(driverId);
 
     if (!driver) {
-      return res.status(404).json({ msg: 'Driver not found' });
+      return res.status(404).json({ msg: "Driver not found" });
     }
-
-    if (req.body.vehicleNumber) {
-      const existing = await Driver.findOne({
-        vehicleNumber: req.body.vehicleNumber,
-        _id: { $ne: driver._id }
-      });
-
-      if (existing) {
-        return res.status(400).json({
-          msg: "Vehicle number already used by another driver"
-        });
-      }
-    }
-
-    Object.assign(driver, req.body, {
-      profileStatus: "Complete"
+    const existing = await Driver.findOne({
+      vehicleNumber: req.body.vehicleNumber,
+      _id: { $ne: driverId }
     });
 
-    const updatedDriver = await driver.save();
+    if (existing) {
+      return res.status(400).json({
+        msg: "Vehicle number already exists"
+      });
+    }
 
-    await sendEmail(
-      updatedDriver.email,
-      "Profile Activated",
-      "Your driver profile is now active."
-    );
+    // update fields
+    driver.name = req.body.name;
+    driver.address = req.body.address;
+    driver.licenseNumber = req.body.licenseNumber;
+    driver.phone = req.body.phone;
+    driver.gender = req.body.gender;
+    driver.experience = req.body.experience;
+    driver.vehicleType = req.body.vehicleType;
+    driver.vehicleNumber = req.body.vehicleNumber;
 
-    res.json(updatedDriver);
+    driver.profileStatus = "Complete";
+
+    await driver.save();
+
+    res.json(driver);
 
   } catch (error) {
-    console.error("UPDATE DRIVER PROFILE ERROR:", error);
-    res.status(500).json({ msg: "Server error" });
+    console.error("🔥 PROFILE ERROR:", error);
+
+    // 🔥 duplicate vehicle number fix
+    if (error.code === 11000) {
+      return res.status(400).json({
+        msg: "Vehicle number already exists"
+      });
+    }
+
+    res.status(500).json({ msg: error.message });
   }
 };
-
 exports.getAssignedTasks = async (req, res) => {
   try {
     const driverId = new mongoose.Types.ObjectId(req.user.id);
