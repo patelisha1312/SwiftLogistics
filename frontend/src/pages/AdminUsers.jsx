@@ -11,7 +11,7 @@ const AdminUsers = () => {
   const fetchUsers = async () => {
     try {
       const res = await axios.get(
-        "http://swiftlogictics-backend.onrender.com/api/auth/users",
+        "http://swiftlogistics-backend.onrender.com/api/auth/users",
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -33,7 +33,7 @@ const AdminUsers = () => {
   const handleDelete = async (id) => {
     try {
       await axios.delete(
-        `http://swiftlogictics-backend.onrender.com/api/auth/users/${id}`,
+        `http://swiftlogistics-backend.onrender.com/api/auth/users/${id}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,

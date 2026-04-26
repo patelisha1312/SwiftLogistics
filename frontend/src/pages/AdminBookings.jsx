@@ -10,7 +10,7 @@ const AdminBookings = () => {
 
 useEffect(() => {
   axios
-    .get("http://swiftlogictics-backend.onrender.com/api/bookings/all", {
+    .get("http://swiftlogistics-backend.onrender.com/api/bookings/all", {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -23,12 +23,12 @@ useEffect(() => {
 }, []);
 const updateStatus = async (id, status) => {
   await axios.put(
-    `http://swiftlogictics-backend.onrender.com/api/bookings/update-status/${id}`,
+    `http://swiftlogistics-backend.onrender.com/api/bookings/update-status/${id}`,
     { status }
   );
 
   // 🔄 refresh
-  const res = await axios.get("http://swiftlogictics-backend.onrender.com/api/bookings/all", {
+  const res = await axios.get("http://swiftlogistics-backend.onrender.com/api/bookings/all", {
     headers: {
       Authorization: `Bearer ${token}`,
     },

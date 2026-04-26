@@ -1,6 +1,6 @@
 import { StrictMode } from 'react'
 import axios from 'axios';
-axios.defaults.baseURL = 'https://swiftlogictics-backend.onrender.com';
+axios.defaults.baseURL = 'https://swiftlogistics-backend.onrender.com';
 axios.defaults.withCredentials = true;
 import { createRoot } from 'react-dom/client'
 import './index.css'

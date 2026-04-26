@@ -80,7 +80,7 @@ const [items, setItems] = useState([]);
 
   try {
     const response = await fetch(
-      `http://swiftlogictics-backend.onrender.com/api/geocode?address=${encodeURIComponent(address)}`
+      `http://swiftlogistics-backend.onrender.com/api/geocode?address=${encodeURIComponent(address)}`
     );
 
     const data = await response.json();
