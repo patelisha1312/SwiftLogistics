@@ -123,33 +123,36 @@ exports.driverSignup = async (req, res) => {
       vehicleNumber
     } = req.body;
 
-    // validation
-    if (!name || !email || !password || !vehicleType || !vehicleNumber) {
-      return res.status(400).json({
-        msg: "All fields are required"
-      });
+    // 🔴 validation
+    if (!name || !email || !password || !phone || !vehicleType || !vehicleNumber) {
+      return res.status(400).json({ msg: "All fields are required" });
     }
 
-    // check existing
-    let driver = await Driver.findOne({ email });
-    if (driver) {
+    // 🔴 check existing email
+    const existingDriver = await Driver.findOne({ email });
+    if (existingDriver) {
       return res.status(400).json({ msg: "Email already registered" });
     }
 
-    // create driver
-    driver = new Driver({
+    // 🔴 check vehicle duplicate
+    const existingVehicle = await Driver.findOne({ vehicleNumber });
+    if (existingVehicle) {
+      return res.status(400).json({ msg: "Vehicle already registered" });
+    }
+
+    // ✅ IMPORTANT: DO NOT HASH HERE
+    const driver = new Driver({
       name,
       email,
-      password, // ⚠️ let model hash it
+      password,   // model will hash
       phone,
       vehicleType,
-      vehicleNumber,
-      profileStatus: "Incomplete"
+      vehicleNumber
     });
 
     await driver.save();
 
-    const token = jwt.sign(
+    const token = require("jsonwebtoken").sign(
       { id: driver._id, role: "driver" },
       process.env.JWT_SECRET,
       { expiresIn: "7d" }
@@ -161,14 +164,13 @@ exports.driverSignup = async (req, res) => {
         id: driver._id,
         name: driver.name,
         email: driver.email,
-        role: "driver",
-        profileStatus: driver.profileStatus
+        role: "driver"
       }
     });
 
   } catch (error) {
-    console.error("DRIVER SIGNUP ERROR:", error);
-    res.status(500).json({ msg: "Server error" });
+    console.error("🔥 DRIVER SIGNUP ERROR:", error);
+    res.status(500).json({ msg: error.message });
   }
 };
 // Driver Login
