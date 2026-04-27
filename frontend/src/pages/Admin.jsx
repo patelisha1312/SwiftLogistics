@@ -187,7 +187,7 @@ const formatRevenue = (amount) => {
           <StatCard 
             icon={Star} 
             title="Customer Rating" 
-            value={dashboardStats?.customerSatisfaction || 0} 
+            value={(dashboardStats?.customerSatisfaction || 0).toFixed(1)}
             trend={0.3}
             subtitle="Out of 5.0"
             color="yellow"
