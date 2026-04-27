@@ -34,7 +34,7 @@ const [suggestions, setSuggestions] = useState([]);
     );
 
     // ✅ redirect properly
-    navigate("/dashboard"); // or "/" if dashboard not exist
+    navigate("/");
   }
 }, [location.search, login, navigate]);
 
