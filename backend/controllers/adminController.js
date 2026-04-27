@@ -133,21 +133,29 @@ exports.getTopRoutes = async (req, res) => {
   try {
     const data = await Booking.aggregate([
       {
+        $unwind: "$pickupLocations" // break pickup array
+      },
+      {
         $group: {
-          _id: "$pickupLocations.0.address", // ✅ FIXED
+          _id: {
+            pickup: "$pickupLocations.address",
+            drop: { $arrayElemAt: ["$dropLocations.address", 0] } // get first drop
+          },
           shipments: { $sum: 1 },
-          revenue: { $sum: "$amount" } // ✅ FIXED
+          revenue: { $sum: "$amount" }
         }
       },
       { $sort: { shipments: -1 } },
       { $limit: 5 }
     ]);
 
-    res.json(data.map(d => ({
-      route: d._id || "Unknown",
-      shipments: d.shipments,
-      revenue: d.revenue
-    })));
+    res.json(
+      data.map(d => ({
+        route: `${d._id.pickup} → ${d._id.drop || "Unknown"}`,
+        shipments: d.shipments,
+        revenue: d.revenue
+      }))
+    );
 
   } catch (err) {
     console.error(err);

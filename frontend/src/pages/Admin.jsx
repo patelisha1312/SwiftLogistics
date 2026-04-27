@@ -378,7 +378,7 @@ const formatRevenue = (amount) => {
                     <tr key={index} className="border-b hover:bg-gray-50">
                       <td className="py-3 px-2 font-medium">{route.route}</td>
                       <td className="py-3 px-2 text-right text-gray-600">{route.shipments.toLocaleString()}</td>
-                      <td className="py-3 px-2 text-right font-semibold text-green-600">₹{route.revenue}K</td>
+                      <td className="py-3 px-2 text-right font-semibold text-green-600">₹{route.revenue.toLocaleString()}</td>
                     </tr>
                   ))}
                 </tbody>
