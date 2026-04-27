@@ -18,7 +18,7 @@ const [suggestions, setSuggestions] = useState([]);
   
   // ✅ Handle Google login redirect
   useEffect(() => {
-  const params = new URLSearchParams(window.location.search);
+  const params = new URLSearchParams(location.search);
   const token = params.get("token");
 
   if (token) {
@@ -33,9 +33,10 @@ const [suggestions, setSuggestions] = useState([]);
       token
     );
 
-    navigate("/");
+    // ✅ redirect properly
+    navigate("/dashboard"); // or "/" if dashboard not exist
   }
-}, [login, navigate]);
+}, [location.search, login, navigate]);
 
 
   const handleChange = (e) => {

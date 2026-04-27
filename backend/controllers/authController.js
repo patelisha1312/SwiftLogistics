@@ -237,7 +237,7 @@ exports.googleCallback = async (req, res) => {
     const name = encodeURIComponent(user.name);
     const email = encodeURIComponent(user.email);
 
-   res.redirect(`${process.env.FRONTEND_URL}/?token=${token}&name=${name}&email=${email}`)
+   res.redirect(`${process.env.FRONTEND_URL}/login?token=${token}&name=${name}&email=${email}`)
 
   } catch (error) {
     res.redirect(`${process.env.FRONTEND_URL}/login`);
