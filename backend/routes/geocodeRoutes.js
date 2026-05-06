@@ -4,56 +4,35 @@ const axios = require("axios");
 
 router.get("/", async (req, res) => {
   try {
-
     const { address } = req.query;
 
     if (!address) {
-      return res.status(400).json({
-        error: "Address required"
-      });
+      return res.status(400).json({ error: "Address required" });
     }
 
-    console.log("📍 Geocoding:", address);
-const response = await axios.get(
-  `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(address)}&format=json&limit=1`,
-  {
-    headers: {
-      "User-Agent": "Mozilla/5.0",
-      "Accept-Language": "en"
-    },
-
-    timeout: 20000
-  }
-);
-
-    console.log("✅ NOMINATIM RESPONSE:", response.data);
+    const response = await axios.get(
+      "https://nominatim.openstreetmap.org/search",
+      {
+        params: {
+          q: address,
+          format: "json",
+          limit: 1
+        },
+        headers: {
+          "User-Agent": "swift-logistics-app" 
+        }
+      }
+    );
 
     if (!response.data || response.data.length === 0) {
-      return res.status(404).json({
-        error: "Location not found"
-      });
+      return res.json([]); // return empty safely
     }
 
-    const place = response.data[0];
-
-    return res.json({
-      lat: parseFloat(place.lat),
-      lng: parseFloat(place.lon)
-    });
+    res.json(response.data);
 
   } catch (error) {
-
-    console.log("❌ GEOCODE ERROR:");
-
-    if (error.response) {
-      console.log(error.response.data);
-    } else {
-      console.log(error.message);
-    }
-
-    return res.status(500).json({
-      error: "Geocode failed"
-    });
+    console.log("Geocode ERROR:", error.message);
+    res.status(500).json({ error: "Geocode failed" });
   }
 });
 
