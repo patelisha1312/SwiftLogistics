@@ -14,23 +14,17 @@ router.get("/", async (req, res) => {
     }
 
     console.log("📍 Geocoding:", address);
+const response = await axios.get(
+  `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(address)}&format=json&limit=1`,
+  {
+    headers: {
+      "User-Agent": "Mozilla/5.0",
+      "Accept-Language": "en"
+    },
 
-    const response = await axios.get(
-      "https://nominatim.openstreetmap.org/search",
-      {
-        params: {
-          q: address,
-          format: "json",
-          limit: 1
-        },
-
-        headers: {
-          "User-Agent": "swift-logistics-app"
-        },
-
-        timeout: 10000
-      }
-    );
+    timeout: 20000
+  }
+);
 
     console.log("✅ NOMINATIM RESPONSE:", response.data);
 
