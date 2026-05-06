@@ -170,11 +170,17 @@ useEffect(() => {
       if (!pickup?.address || !drop?.address) continue;
 
       const origin = await getCoords(pickup.address);
-      const destination = await getCoords(drop.address);
+console.log("ORIGIN:", origin);
 
-      if (!origin || !destination) continue;
+const destination = await getCoords(drop.address);
+console.log("DESTINATION:", destination);
 
-      calculateRoute(task.bookingId, origin, destination);
+if (!origin || !destination) {
+  console.log("❌ Missing coordinates");
+  continue;
+}
+
+await calculateRoute(task.bookingId, origin, destination);
     }
   };
 
@@ -310,7 +316,7 @@ const calculateRoute = async (bookingId, origin, destination) => {
     console.log("ROUTE API RESPONSE:", data);
 
     // ✅ FIX: DIRECT RESPONSE (YOUR CASE)
-    if (data.distance && data.duration) {
+    if (data?.distance && data?.duration) {
 
       const distance = parseFloat(data.distance); // "519.22 km" → 519.22
       const duration = parseInt(data.duration);   // "375 mins" → 375
